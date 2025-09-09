@@ -1,0 +1,658 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>friends</title>
+    <script src="script.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f5f5f5;
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+      
+      .tabs {
+        display: flex;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #ddd;
+      }
+      
+      .tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        border: none;
+        background: none;
+        font-size: 16px;
+        color: #666;
+      }
+      
+      .tab.active {
+        color: #4CAF50;
+        border-bottom: 2px solid #4CAF50;
+      }
+      
+      .tab-content {
+        display: none;
+      }
+      
+      .tab-content.active {
+        display: block;
+      }
+      
+      .add-friend-form {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+      }
+      
+      .add-friend-form input {
+        width: 300px;
+        padding: 10px;
+        margin-right: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      
+      .add-friend-form button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      
+      .friends-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+      
+      .friend-card {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        background-color: #fafafa;
+      }
+      
+      .friend-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 10px;
+      }
+      
+      .friend-name {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      
+      .friend-email {
+        color: #666;
+        font-size: 12px;
+        margin-bottom: 10px;
+      }
+      
+      .chat-button {
+        background-color: #2196F3;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+      
+      .chat-container {
+        display: flex;
+        height: 500px;
+      }
+      
+      .friends-sidebar {
+        width: 250px;
+        border-right: 1px solid #ddd;
+        overflow-y: auto;
+      }
+      
+      .friend-item {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+      }
+      
+      .friend-item:hover {
+        background-color: #f5f5f5;
+      }
+      
+      .friend-item.active {
+        background-color: #e3f2fd;
+      }
+      
+      .friend-item img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+      
+      .chat-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .chat-header {
+        padding: 15px;
+        border-bottom: 1px solid #ddd;
+        background-color: #f9f9f9;
+        font-weight: bold;
+      }
+      
+      .messages-container {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        background-color: #fafafa;
+      }
+      
+      .message {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: flex-start;
+      }
+      
+      .message.sent {
+        justify-content: flex-end;
+      }
+      
+      .message-content {
+        max-width: 70%;
+        padding: 10px 15px;
+        border-radius: 15px;
+        word-wrap: break-word;
+      }
+      
+      .message.received .message-content {
+        background-color: #e0e0e0;
+        color: #333;
+      }
+      
+      .message.sent .message-content {
+        background-color: #4CAF50;
+        color: white;
+      }
+      
+      .message-time {
+        font-size: 11px;
+        color: #666;
+        margin-top: 5px;
+      }
+      
+      .message-input {
+        display: flex;
+        padding: 15px;
+        border-top: 1px solid #ddd;
+        background-color: white;
+      }
+      
+      .message-input input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        outline: none;
+        margin-right: 10px;
+      }
+      
+      .message-input button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+      }
+      
+      .no-selection {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #666;
+        font-style: italic;
+      }
+      
+      button {
+        margin: 5px;
+        padding: 10px 15px;
+      }
+      
+      .alert {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+      }
+      
+      .alert.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      
+      .alert.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Friends</h1>
+      
+      <!-- User Email Input -->
+      <div style="margin-bottom: 20px;">
+        <label>Your Email:</label>
+        <input type="email" id="userEmail" placeholder="Enter your email" style="margin-left: 10px; padding: 5px;">
+        <button onclick="loadUserData()" style="margin-left: 10px;">Set User</button>
+      </div>
+      
+      <div id="alertMessage"></div>
+      
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" onclick="showTab('friends-tab')">My Friends</button>
+        <button class="tab" onclick="showTab('add-friend-tab')">Add Friend</button>
+        <button class="tab" onclick="showTab('chat-tab')">Chat</button>
+      </div>
+      
+      <!-- Friends List Tab -->
+      <div id="friends-tab" class="tab-content active">
+        <h2>Your Friends</h2>
+        <div id="friendsList" class="friends-list">
+          <!-- Friends will be loaded here -->
+        </div>
+      </div>
+      
+      <!-- Add Friend Tab -->
+      <div id="add-friend-tab" class="tab-content">
+        <h2>Add New Friend</h2>
+        <div class="add-friend-form">
+          <input type="email" id="friendEmail" placeholder="Enter friend's email">
+          <button onclick="addFriend()">Add Friend</button>
+        </div>
+        
+        <h3>All Users</h3>
+        <div id="allUsersList" class="friends-list">
+          <!-- All users will be loaded here -->
+        </div>
+      </div>
+      
+      <!-- Chat Tab -->
+      <div id="chat-tab" class="tab-content">
+        <h2>Chat with Friends</h2>
+        <div class="chat-container">
+          <div class="friends-sidebar">
+            <div id="chatFriendsList">
+              <!-- Friends for chat will be loaded here -->
+            </div>
+          </div>
+          <div class="chat-area">
+            <div class="chat-header">
+              <span id="chatHeader">Select a friend to start chatting</span>
+            </div>
+            <div class="messages-container" id="messagesContainer">
+              <div class="no-selection">Select a friend to view conversation</div>
+            </div>
+            <div class="message-input" id="messageInput" style="display: none;">
+              <input type="text" id="messageText" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+              <button onclick="sendMessage()">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <button type="button" onclick="window.location.href='home.html'">Back to Home</button>
+    </div>
+
+    <script>
+      let currentUser = '';
+      let currentChatFriend = null;
+      let friends = [];
+      let allUsers = [];
+
+      function showTab(tabId) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+          tab.classList.remove('active');
+        });
+        
+        // Remove active class from all tab buttons
+        document.querySelectorAll('.tab').forEach(tab => {
+          tab.classList.remove('active');
+        });
+        
+        // Show selected tab
+        document.getElementById(tabId).classList.add('active');
+        
+        // Add active class to clicked tab button
+        event.target.classList.add('active');
+        
+        // Load data based on tab
+        if (tabId === 'friends-tab') {
+          loadFriends();
+        } else if (tabId === 'add-friend-tab') {
+          loadAllUsers();
+        } else if (tabId === 'chat-tab') {
+          loadChatFriends();
+        }
+      }
+
+      function showAlert(message, type) {
+        const alertDiv = document.getElementById('alertMessage');
+        alertDiv.innerHTML = `<div class="alert ${type}">${message}</div>`;
+        setTimeout(() => {
+          alertDiv.innerHTML = '';
+        }, 3000);
+      }
+
+      function loadUserData() {
+        currentUser = document.getElementById('userEmail').value.trim();
+        if (!currentUser) {
+          showAlert('Please enter your email', 'error');
+          return;
+        }
+        showAlert('User set successfully!', 'success');
+        loadFriends();
+      }
+
+      function loadFriends() {
+        if (!currentUser) {
+          document.getElementById('friendsList').innerHTML = '<p>Please set your email first</p>';
+          return;
+        }
+        
+        fetch(`/api/friends/${currentUser}`)
+          .then(response => response.json())
+          .then(data => {
+            friends = data;
+            const friendsList = document.getElementById('friendsList');
+            friendsList.innerHTML = '';
+            
+            if (friends.length === 0) {
+              friendsList.innerHTML = '<p>No friends yet. Add some friends!</p>';
+              return;
+            }
+            
+            friends.forEach(friend => {
+              const friendCard = document.createElement('div');
+              friendCard.className = 'friend-card';
+              
+              friendCard.innerHTML = `
+                <img src="${friend.profilePicture || '/default-avatar.png'}" 
+                     alt="${friend.name}" 
+                     class="friend-avatar"
+                     onerror="this.src='/default-avatar.png'">
+                <div class="friend-name">${friend.name}</div>
+                <div class="friend-email">${friend.email}</div>
+                <button class="chat-button" onclick="startChat('${friend.email}', '${friend.name}')">Chat</button>
+              `;
+              
+              friendsList.appendChild(friendCard);
+            });
+          })
+          .catch(error => {
+            console.error('Error loading friends:', error);
+            showAlert('Error loading friends', 'error');
+          });
+      }
+
+      function loadAllUsers() {
+        fetch('/api/profiles')
+          .then(response => response.json())
+          .then(data => {
+            allUsers = data;
+            const allUsersList = document.getElementById('allUsersList');
+            allUsersList.innerHTML = '';
+            
+            // Filter out current user
+            const otherUsers = allUsers.filter(user => user.email !== currentUser);
+            
+            if (otherUsers.length === 0) {
+              allUsersList.innerHTML = '<p>No other users found</p>';
+              return;
+            }
+            
+            otherUsers.forEach(user => {
+              const userCard = document.createElement('div');
+              userCard.className = 'friend-card';
+              
+              userCard.innerHTML = `
+                <img src="${user.profilePicture || '/default-avatar.png'}" 
+                     alt="${user.name}" 
+                     class="friend-avatar"
+                     onerror="this.src='/default-avatar.png'">
+                <div class="friend-name">${user.name}</div>
+                <div class="friend-email">${user.email}</div>
+                <button class="chat-button" onclick="addFriendByEmail('${user.email}')">Add Friend</button>
+              `;
+              
+              allUsersList.appendChild(userCard);
+            });
+          })
+          .catch(error => {
+            console.error('Error loading users:', error);
+            showAlert('Error loading users', 'error');
+          });
+      }
+
+      function addFriend() {
+        const friendEmail = document.getElementById('friendEmail').value.trim();
+        if (!friendEmail) {
+          showAlert('Please enter friend\'s email', 'error');
+          return;
+        }
+        addFriendByEmail(friendEmail);
+      }
+
+      function addFriendByEmail(friendEmail) {
+        if (!currentUser) {
+          showAlert('Please set your email first', 'error');
+          return;
+        }
+        
+        fetch('/api/add-friend', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userEmail: currentUser,
+            friendEmail: friendEmail
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            showAlert(data.message, 'success');
+            document.getElementById('friendEmail').value = '';
+            loadFriends();
+            loadAllUsers();
+          } else {
+            showAlert(data.message, 'error');
+          }
+        })
+        .catch(error => {
+          console.error('Error adding friend:', error);
+          showAlert('Error adding friend', 'error');
+        });
+      }
+
+      function loadChatFriends() {
+        if (!currentUser) {
+          document.getElementById('chatFriendsList').innerHTML = '<p>Please set your email first</p>';
+          return;
+        }
+        
+        fetch(`/api/friends/${currentUser}`)
+          .then(response => response.json())
+          .then(data => {
+            const chatFriendsList = document.getElementById('chatFriendsList');
+            chatFriendsList.innerHTML = '';
+            
+            if (data.length === 0) {
+              chatFriendsList.innerHTML = '<p style="padding: 15px;">No friends to chat with</p>';
+              return;
+            }
+            
+            data.forEach(friend => {
+              const friendItem = document.createElement('div');
+              friendItem.className = 'friend-item';
+              friendItem.onclick = () => selectChatFriend(friend);
+              
+              friendItem.innerHTML = `
+                <img src="${friend.profilePicture || '/default-avatar.png'}" 
+                     alt="${friend.name}"
+                     onerror="this.src='/default-avatar.png'">
+                <div>
+                  <div style="font-weight: bold;">${friend.name}</div>
+                  <div style="font-size: 12px; color: #666;">${friend.email}</div>
+                </div>
+              `;
+              
+              chatFriendsList.appendChild(friendItem);
+            });
+          })
+          .catch(error => {
+            console.error('Error loading chat friends:', error);
+          });
+      }
+
+      function selectChatFriend(friend) {
+        currentChatFriend = friend;
+        
+        // Update active friend
+        document.querySelectorAll('.friend-item').forEach(item => {
+          item.classList.remove('active');
+        });
+        event.currentTarget.classList.add('active');
+        
+        // Update chat header
+        document.getElementById('chatHeader').textContent = `Chat with ${friend.name}`;
+        
+        // Show message input
+        document.getElementById('messageInput').style.display = 'flex';
+        
+        // Load messages
+        loadMessages();
+      }
+
+      function loadMessages() {
+        if (!currentChatFriend) return;
+        
+        fetch(`/api/messages/${currentUser}/${currentChatFriend.email}`)
+          .then(response => response.json())
+          .then(messages => {
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.innerHTML = '';
+            
+            if (messages.length === 0) {
+              messagesContainer.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">No messages yet. Start the conversation!</div>';
+              return;
+            }
+            
+            messages.forEach(message => {
+              const messageDiv = document.createElement('div');
+              messageDiv.className = `message ${message.from === currentUser ? 'sent' : 'received'}`;
+              
+              const time = new Date(message.timestamp).toLocaleTimeString();
+              
+              messageDiv.innerHTML = `
+                <div class="message-content">
+                  ${message.message}
+                  <div class="message-time">${time}</div>
+                </div>
+              `;
+              
+              messagesContainer.appendChild(messageDiv);
+            });
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+          })
+          .catch(error => {
+            console.error('Error loading messages:', error);
+          });
+      }
+
+      function sendMessage() {
+        const messageText = document.getElementById('messageText').value.trim();
+        if (!messageText || !currentChatFriend) return;
+        
+        fetch('/api/send-message', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            fromEmail: currentUser,
+            toEmail: currentChatFriend.email,
+            message: messageText
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            document.getElementById('messageText').value = '';
+            loadMessages();
+          } else {
+            showAlert(data.message, 'error');
+          }
+        })
+        .catch(error => {
+          console.error('Error sending message:', error);
+          showAlert('Error sending message', 'error');
+        });
+      }
+
+      function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+          sendMessage();
+        }
+      }
+
+      function startChat(friendEmail, friendName) {
+        // Switch to chat tab
+        showTab('chat-tab');
+        
+        // Find and select the friend
+        const friend = friends.find(f => f.email === friendEmail);
+        if (friend) {
+          setTimeout(() => {
+            selectChatFriend(friend);
+          }, 100);
+        }
+      }
+
+      // Load friends when page loads
+      window.onload = function() {
+        loadFriends();
+      }
+    </script>
+  </body>
+</html>

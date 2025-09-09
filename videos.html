@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Videos - Luke-azon</title>
+  <script src="script.js"></script>
+  <style>
+    .video-container {
+      margin: 20px 0;
+      text-align: center;
+    }
+    .video-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    video {
+      max-width: 100%;
+      height: auto;
+    }
+    iframe {
+      max-width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h1>Videos</h1>
+  
+  <!-- YouTube Embedded Video Example -->
+  <div class="video-container">
+    <div class="video-title">Sample YouTube Video</div>
+    <iframe width="560" height="315" 
+            src="https://youtu.be/_sW-4D1m2Rg" 
+            frameborder="0" 
+            allowfullscreen>
+    </iframe>
+  </div>
+
+  <!-- Local Video File Example -->
+  <div class="video-container">
+    <div class="video-title">Local Video</div>
+    <video width="560" height="315" controls>
+      <source src="sample-video.mp4" type="video/mp4">
+      <source src="sample-video.webm" type="video/webm">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <!-- Video Upload Form -->
+  <div class="video-container">
+    <h2>Upload Your Own Video</h2>
+    <form action="/upload-video" method="post" enctype="multipart/form-data">
+      <input type="file" name="video" accept="video/*" required>
+      <input type="text" name="title" placeholder="Video title" required>
+      <br><br>
+      <input type="submit" value="Upload Video">
+    </form>
+  </div>
+
+  <br>
+  <button type="button" onclick="window.location.href='home.html'">Back to Home</button>
+  <button type="button" onclick="window.location.href='index.html'">Main Page</button>
+</body>
+</html>

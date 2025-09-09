@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>discover people</title>
+    <script src="script.js"></script>
+    <style>
+      .search-container {
+        margin: 20px 0;
+        text-align: center;
+      }
+      
+      .search-bar {
+        width: 300px;
+        padding: 10px;
+        font-size: 16px;
+        border: 2px solid #ddd;
+        border-radius: 25px;
+        outline: none;
+      }
+      
+      .search-bar:focus {
+        border-color: #4CAF50;
+      }
+      
+      .users-container {
+        margin: 30px 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+      }
+      
+      .user-card {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        width: 200px;
+        background-color: #f9f9f9;
+      }
+      
+      .user-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #ddd;
+        margin-bottom: 10px;
+      }
+      
+      .user-name {
+        font-weight: bold;
+        font-size: 16px;
+        margin: 5px 0;
+      }
+      
+      .user-email {
+        color: #666;
+        font-size: 14px;
+      }
+      
+      .no-results {
+        text-align: center;
+        color: #666;
+        font-style: italic;
+        margin: 30px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Discover People</h1>
+    
+    <!-- Search Bar -->
+    <div class="search-container">
+      <input type="text" 
+             id="searchBar" 
+             class="search-bar" 
+             placeholder="Search for users by name or email..."
+             oninput="searchUsers()">
+    </div>
+    
+    <!-- Users Display -->
+    <div id="usersContainer" class="users-container">
+      <!-- Users will be loaded here -->
+    </div>
+    
+    <button type="button" onclick="window.location.href='home.html'">Back</button>
+
+    <script>
+      let allUsers = [];
+
+      // Load all users when page loads
+      function loadUsers() {
+        fetch('/api/profiles')
+          .then(response => response.json())
+          .then(users => {
+            allUsers = users;
+            displayUsers(allUsers);
+          })
+          .catch(error => {
+            console.error('Error loading users:', error);
+            document.getElementById('usersContainer').innerHTML = '<p class="no-results">Error loading users.</p>';
+          });
+      }
+
+      // Display users in the container
+      function displayUsers(users) {
+        const usersContainer = document.getElementById('usersContainer');
+        usersContainer.innerHTML = '';
+
+        if (users.length === 0) {
+          usersContainer.innerHTML = '<p class="no-results">No users found.</p>';
+          return;
+        }
+
+        users.forEach(user => {
+          const userCard = document.createElement('div');
+          userCard.className = 'user-card';
+          
+          userCard.innerHTML = `
+            <img src="${user.profilePicture || '/default-avatar.png'}" 
+                 alt="${user.name}'s profile" 
+                 class="user-avatar"
+                 onerror="this.src='/default-avatar.png'">
+            <div class="user-name">${user.name}</div>
+            <div class="user-email">${user.email}</div>
+          `;
+          
+          usersContainer.appendChild(userCard);
+        });
+      }
+
+      // Search functionality
+      function searchUsers() {
+        const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+        
+        if (searchTerm === '') {
+          displayUsers(allUsers);
+          return;
+        }
+
+        const filteredUsers = allUsers.filter(user => 
+          user.name.toLowerCase().includes(searchTerm) || 
+          user.email.toLowerCase().includes(searchTerm)
+        );
+        
+        displayUsers(filteredUsers);
+      }
+
+      // Load users when page loads
+      window.onload = loadUsers;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>homepage</title>
+    <script src="script.js">
+    </script>
+  </head>
+  <head>
+    <title>homepage</title>
+    <script src="script.js">
+    </script>
+    <style>
+      .videos-section {
+        margin: 30px 0;
+      }
+      .video-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin: 20px 0;
+      }
+      .video-card {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 15px;
+        width: 300px;
+        text-align: center;
+      }
+      .video-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      video {
+        width: 100%;
+        max-width: 280px;
+        height: auto;
+      }
+      .navigation-buttons {
+        margin: 20px 0;
+      }
+      button {
+        margin: 5px;
+        padding: 10px 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Home</h1>
+    <p>Welcome to your home page!</p>
+    
+    <!-- Videos Section -->
+    <div class="videos-section">
+      <h2>Recent Videos</h2>
+      <div id="videosDisplay" class="video-grid">
+        <!-- Videos will be loaded here -->
+      </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="navigation-buttons">
+      <button type="button" onclick="window.location.href='videos.html'">All Videos</button>
+      <button type="button" onclick="window.location.href='profile-pictures.html'">Profile Pictures</button>
+      <button type="button" onclick="window.location.href='index.html'">log out</button>
+      <button type="button" onclick="window.location.href='changelog.html'">changelog</button>
+      <button type="button" onclick="window.location.href='discover.html'">discover</button>
+      <button type="button" onclick="window.location.href='friends.html'">friends</button>
+    </div>
+
+    <script>
+      // Load and display videos on homepage
+      function loadVideos() {
+        fetch('/api/videos')
+          .then(response => response.json())
+          .then(videos => {
+            const videosDisplay = document.getElementById('videosDisplay');
+            videosDisplay.innerHTML = '';
+            
+            if (videos.length === 0) {
+              videosDisplay.innerHTML = '<p>No videos uploaded yet. <a href="videos.html">Upload your first video!</a></p>';
+              return;
+            }
+            
+            // Display the most recent videos (limit to 6 for homepage)
+            const recentVideos = videos.slice(-6).reverse();
+            
+            recentVideos.forEach(video => {
+              const videoCard = document.createElement('div');
+              videoCard.className = 'video-card';
+              
+              videoCard.innerHTML = `
+                <div class="video-title">${video.title}</div>
+                <video controls>
+                  <source src="${video.path}" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              `;
+              
+              videosDisplay.appendChild(videoCard);
+            });
+          })
+          .catch(error => {
+            console.error('Error loading videos:', error);
+            document.getElementById('videosDisplay').innerHTML = '<p>Error loading videos.</p>';
+          });
+      }
+
+      // Load videos when page loads
+      window.onload = loadVideos;
+    </script>
+  </body>
+</html>
